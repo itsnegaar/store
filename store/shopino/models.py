@@ -1,13 +1,24 @@
 from django.db import models
-from django.core.validators import MinLengthValidator
+
 
 class Shop(models.Model):
+    objects = None
     name = models.CharField(max_length=100, unique=True)
-    # address = models.CharField(max_length=200, validators=[MinLengthValidator(5, "Shop name must be at least 5 characters long")] )
     address = models.CharField(max_length=200)
-
     description = models.TextField()
     followers = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return self.name
+
+
+class Product(models.Model):
+    objects = None
+    name = models.CharField(max_length=100)
+    address = models.CharField(max_length=200)
+    description = models.TextField()
+    date = models.DateField(auto_now_add=True)
+    shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

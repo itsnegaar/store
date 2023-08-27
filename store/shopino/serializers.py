@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Shop
+from .models import Shop, Product
 
 class ShopSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
@@ -15,3 +15,8 @@ class ShopSerializer(serializers.ModelSerializer):
         return value
 
 
+class ProductSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+    class Meta:
+        model = Product
+        fields = ('id', 'name', 'owner', 'description', 'shop', 'date')
