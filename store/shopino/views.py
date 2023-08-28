@@ -1,22 +1,19 @@
-from .models import Product, Shop
-from .serializers import ShopSerializer, ProductSerializer, BookmarkSerializer
+from .models import Product, Shop , UserBookmark
+from .serializers import ShopSerializer, ProductSerializer
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import pagination
 
 from rest_framework import views, viewsets, permissions, status, response
 
-
-from django.http import Http404
 from django.shortcuts import get_object_or_404
 
-from django.views.decorators.http import require_POST
-from django.views.decorators.http import require_http_methods
 from rest_framework.views import APIView
 
+from datetime import datetime
 
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import permissions
+
 
 class ShopViewSet(viewsets.ModelViewSet):
     queryset = Shop.objects.all()
@@ -34,14 +31,12 @@ class ShopViewSet(viewsets.ModelViewSet):
         max_page_size = 10
         page_query_param = 'p'
 
-    # pagination_class = CustomPagination
 
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
 
 
 
@@ -55,7 +50,7 @@ class ShopsProductViewset(viewsets.ModelViewSet):
         return Product.objects.filter(shop=shop)
 
 
-class BookmarkView(APIView):
+class BookmarkView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, id=None):
@@ -65,16 +60,14 @@ class BookmarkView(APIView):
 
             if is_bookmarked:
                 product.bookmarked_by.remove(request.user)
+                UserBookmark.objects.filter(user=request.user, product=product).delete()
                 message = 'Product is not bookmarked anymore.'
-                return response.Response({'message': message, 'product_id': id})
             else:
                 product.bookmarked_by.add(request.user)
+                UserBookmark.date_bookmarked = datetime.now()
                 message = 'Product bookmarked successfully.'
-                #
-                # product.save()
-                return response.Response({'message': message, 'product_id': id})
 
-
+            return response.Response({'message': message, 'product_id': id})
         except Product.DoesNotExist:
             return response.Response({'error': 'Product not found.'})
 
@@ -91,3 +84,5 @@ class BookmarkedUsersView(APIView):
             return response.Response({'bookmarked_users': bookmarked_usernames})
         except Product.DoesNotExist:
             return response.Response({'error': 'Product not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+
