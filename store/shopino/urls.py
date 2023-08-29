@@ -15,5 +15,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('product/<int:id>/bookmark/', BookmarkView.as_view(), name='bookmark'),
     path('product/<int:product_id>/bookmarked-users/', BookmarkedUsersView.as_view(), name='bookmarked-users'),
+    path("__debug__/", include("debug_toolbar.urls")),
 
 ]
