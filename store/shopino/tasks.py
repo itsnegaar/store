@@ -3,6 +3,14 @@ from .models import Shop
 
 @shared_task
 def update_product_counts():
-    for shop in Shop.objects.all():
+    shops = Shop.objects.all()
+    for shop in shops:
         shop.product_count = shop.product_set.count()
-        shop.save(update_fields=['product_count'])
+
+    Shop.objects.bulk_update(list(shops), ['product_count'])
+
+#
+# shops = Shop.objects.annotate(product_count=F('product__id__count'))
+# updated_count = shops.update(product_count=F('product_count'))
+
+
