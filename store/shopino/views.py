@@ -18,10 +18,10 @@ from django.db.models import Count
 
 
 
-
 class ShopViewSet(viewsets.ModelViewSet):
-    # queryset = Shop.objects.all()
-    queryset = Shop.objects.annotate(product_count=Count('product'))
+    queryset = Shop.objects.all()
+    # queryset = Shop.objects.annotate(product_count=Count('product'))
+
     serializer_class = ShopSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
@@ -42,6 +42,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
 
 
 

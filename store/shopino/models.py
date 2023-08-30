@@ -8,6 +8,7 @@ class Shop(models.Model):
     address = models.CharField(max_length=200)
     description = models.TextField()
     followers = models.PositiveIntegerField(default=0)
+    product_count = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -22,7 +23,7 @@ class Product(models.Model):
     date = models.DateField(auto_now_add=True)
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
     price = models.PositiveIntegerField(default=0)
-    bookmarked_by = models.ManyToManyField(User, through='UserBookmark',related_name='bookmarked_products')
+    bookmarked_by = models.ManyToManyField(User, through='UserBookmark', related_name='bookmarked_products')
 
     def __str__(self):
         return self.name
